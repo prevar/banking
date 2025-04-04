@@ -1,0 +1,55 @@
+.title {
+  color: white;
+  text-align: center;
+}
+
+body {
+  background-image: url("bluegreenbackg.jpg");
+}
+
+#root {
+  height: 100vh;
+}
+
+.error {
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.hide {
+  display: none;
+}
+
+.show {
+  display: inline;
+}
+
+.nav-btn {
+  width: 30px;
+  text-align: center;
+  margin: 2px;
+  padding: 10px;
+  color: rgb(249, 243, 243);
+  text-decoration: none;
+}
+
+.showlinks {
+  margin-bottom: 40px;
+  padding: 20px;
+  align-items: center;
+}
+
+#linksContainer {
+  width: 100%;
+}
+
+.card {
+  align-self: center;
+}
+
+.firstlink {
+  align-self: flex-start;
+}
