@@ -5,7 +5,7 @@ var dal = require("./dal.js");
 
 const cors = require("cors");
 const corsOption = {
-  origin: ["http://localhost:5173"],
+  origin: ["https://banking-s7lj.onrender.com"],
 };
 
 app.use(express.static("public"));
