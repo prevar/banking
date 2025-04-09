@@ -160,7 +160,7 @@ function Transfer() {
                 </div>
                 <div className="col">
                   <input
-                    type="input"
+                    type="number"
                     className="form-control"
                     id="transferAmount"
                     placeholder="Transfer Amount"

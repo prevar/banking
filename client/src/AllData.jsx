@@ -46,7 +46,7 @@ function AllData() {
             <>
               <Table>
                 <tr>
-                  <td>ACCOUNT HOLDER: ${userEmail}</td>
+                  <td>ACCOUNT HOLDER: {userEmail}</td>
                   <td>ACCOUNT ID: {userId}</td>
                 </tr>
                 <tr>
