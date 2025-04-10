@@ -67,7 +67,7 @@ const Login = () => {
         console.log(
           "Login: User authenticated!!!" + JSON.stringify(userCredential.user)
         );
-        setStatus("SUCCESS:User authenticated in Firebase!");
+        setStatus("SUCCESS:User authenticated in Firebase! Redirecting to home page...");
         getUserAccount(userCredential.user);
       })
       .catch((error) => {
@@ -129,7 +129,7 @@ const Login = () => {
         let authenticatedUser = await response.json();
         console.log("response.json:", authenticatedUser);
         if (authenticatedUser) {
-          setStatus("SUCCESS: User authenticated");
+          setStatus("SUCCESS: User exists in Banking system");
 
           //If role is admin, setIsAdmin to true
           if (authenticatedUser[0].roles.includes("ADMIN")) {
