@@ -5,7 +5,7 @@ var dal = require("./dal.js");
 
 const cors = require("cors");
 const corsOption = {
-  origin: ["https://banking-s7lj.onrender.com"],
+  origin: '*',
 };
 
 app.use(express.static("public"));
@@ -46,6 +46,8 @@ function verifyIdToken(req, res) {
  */
 app.get("/account/findAll", function (req, res) {
   try {
+
+    res.header
     dal.findAll().then((users) => {
       if (users.length <= 0) {
         res.send({});
