@@ -44,17 +44,24 @@ function AllData() {
           title=""
           body={
             <>
-              <Table>
-                <tr>
-                  <td>ACCOUNT HOLDER: {userEmail}</td>
-                  <td>ACCOUNT ID: {userId}</td>
-                </tr>
-                <tr>
-                  <td>ACCOUNT BALANCE: ${userBalance}</td>
-                </tr>
-              </Table>
-              <Table striped>
+              <Table bordered className="mb-5">
                 <thead>
+                  <tr>
+                    <th>ACCOUNT HOLDER</th>
+                    <th>ACCOUNT ID</th>
+                    <th>ACCOUNT BALANCE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                  <td>{userEmail}</td>
+                  <td>{userId}</td>
+                  <td>${userBalance}</td>
+                  </tr>
+                </tbody>
+              </Table>
+              <Table striped bordered >
+                <thead >
                   <tr>
                     <th>Transaction No.</th>
                     <th>Transaction Type</th>

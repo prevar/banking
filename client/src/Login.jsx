@@ -121,6 +121,10 @@ const Login = () => {
     setLoggedInEmail(userData.email);
   }
 
+  /**
+   * get user details from the logged in user. 
+   * @param {*} user 
+   */
   function getUserAccount(user) {
     (async () => {
       const { email } = user;
@@ -140,27 +144,26 @@ const Login = () => {
             setUserFromDBData(authenticatedUser[0]);
           }
           findAllNonAdminUsers();
+         // getAuthId();
         } else {
           setStatus("ERROR: User not found");
           console.log("invalida user");
         }
       } catch (err) {
         console.log("in catch of getuseraccount" + err);
-        setStatus("ERROR: No Account found for user in the banking system!");
+        setStatus("ERROR: No Account found for user in the banking system!"+err);
       }
     })();
   }
 
+ 
   async function findAllNonAdminUsers() {
     let response = await fetch(serverUrl + `/account/findAllNonAdmin`);
     let data = await response.json();
     console.log(data);
-    //setUsers(data);
     const usersList = await data.map((eachUser) => {
       return { value: eachUser.email, label: eachUser.name };
     });
-    console.log("usersList======");
-    console.log(usersList);
     setUsers(usersList);
   }
 

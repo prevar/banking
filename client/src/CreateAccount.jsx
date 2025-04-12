@@ -110,7 +110,7 @@ function CreateForm(props) {
           console.log(data);
         })();
         console.log("Login: User created succesfully!!!");
-
+        
         props.setStatus("SUCCESS:User created succesfully!");
       })
       .catch((error) => {
@@ -183,7 +183,7 @@ function CreateForm(props) {
         </option>
       </select>
       <br />
-      <button type="submit" className="btn btn-light" onClick={handle}>
+      <button type="submit" className="btn btn-primary" onClick={handle}>
         Create Account
       </button>
     </>

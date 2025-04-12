@@ -1,54 +1,46 @@
-import SrchAccount from "./SrchAccount";
 import { Card, useAppContext } from "./AppContext";
 import { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
-import { FormCheck } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import AsyncSelect from "react-select/async";
+import { serverUrl } from "./firebaseConfig";
 
 function Administer() {
   const {
+    loggedInEmail,
     setUserId,
     userEmail,
     setUserEmail,
     setUserBalance,
     setUserHistory,
     setUserRoles,
+    users
   } = useAppContext();
 
   const navigate = useNavigate();
 
-  const [srchResults, setSrchResults] = useState([]);
   const [status, setStatus] = useState("");
-  let srchTable = <></>;
+  const [nextPage, setNextPage]= useState('/Administer');
 
   useEffect(() => {
-    console.log("in useeffect of administer" + srchResults);
-  }, [srchResults, userEmail]);
+    console.log("in useeffect of administer");
+    if (!loggedInEmail) {
+      navigate("/Login");
+    }
+   navigate(nextPage); //nextPage variable value changes on click on button (like Deposit, withdraw..) and useeffect is executed to navigate to the new page.
+  }, [loggedInEmail, userEmail, nextPage] );
 
-  function handleAlldata() {
-    console.log("in handleAlldata");
-    if (validateUserSelected()) navigate("/AllData");
-  }
-
-  function handleDeposit() {
-    console.log("in handleDeposit");
-    if (validateUserSelected()) navigate("/Deposit");
-  }
-
-  function handleWithdraw() {
-    console.log("in handleWithdrwa");
-    if (validateUserSelected()) navigate("/Withdraw");
-  }
-
-  function handleTransfer() {
-    console.log("in handleTransfer");
-    if (validateUserSelected()) navigate("/Transfer");
-  }
-
-  function validateUserSelected() {
+  /**
+   * This function validates the userEmail is not empty and calls getSrchResults to search for the userdata selected
+   * @returns 
+   */
+  async function validateAndGetSelectedUserData() {
     if (userEmail != null && userEmail != "") {
       console.log("valid");
+      const data = await getSrchResults(userEmail);
+      if ( data != null && data.length >= 0)
+        setUserFromDBData(data[0]);
+      else setStatus('no data found for user');
       return true;
     } else {
       console.log("invalid");
@@ -59,6 +51,75 @@ function Administer() {
     }
   }
 
+  /**
+   * This function makes db call to get user data of the user selected
+   * @param {} emailToSearch 
+   * @returns 
+   */
+  async function getSrchResults(emailToSearch) {
+    const url = `${serverUrl}/account/searchWithEmail/${emailToSearch}`;
+    const response = await fetch(url);
+    const srchResUsers = await response.json();
+    return srchResUsers;
+  }
+
+  /**
+   * This takes userdata retrieved from the db and calls setter methods to set values in the context.
+   * @param {*} userData 
+   */
+  function setUserFromDBData(userData) {
+    setUserId(userData._id);
+    setUserEmail(userData.email);
+    setUserBalance(userData.balance);
+    setUserHistory(userData.history);
+    setUserRoles(userData.roles);
+  }
+
+  /**
+   * Calls on Pressing View transactions button
+   * @returns 
+   */
+  async function handleAlldata() {
+    const isValid = await validateAndGetSelectedUserData();
+    
+    if (isValid )  
+    {
+      setNextPage("/AllData");
+    }
+    else return;
+  }
+
+  async function handleDeposit() {
+    const isValid = await validateAndGetSelectedUserData(); 
+    if (isValid )  
+      {
+        setNextPage("/Deposit");
+      }
+      else return;
+  }
+
+  async function handleWithdraw() {
+    const isValid = await validateAndGetSelectedUserData(); 
+    if (isValid )  
+      {
+        setNextPage("/Withdraw");
+      }
+      else return;
+  }
+
+  async function handleTransfer() {
+    const isValid = await validateAndGetSelectedUserData(); 
+    if (isValid )  
+      {
+        setNextPage("/Transfer");
+      }
+      else return;
+  }
+
+ 
+  /**
+   * Calls when user selected is changed.
+   */
   function handleAccChange() {
     clearContextFields();
   }
@@ -71,6 +132,24 @@ function Administer() {
     setUserRoles([]);
   }
 
+  const handleChange = (selectedOption) => {
+    setUserEmail(selectedOption.value);
+  };
+
+  /**
+   * Used to load the matching values 
+   * @param {*} searchValue 
+   * @param {*} callback 
+   */
+  const loadOptions = async (searchValue, callback) => {
+    setStatus('');
+    const filteredOptions = users.filter((option) =>
+      option.label.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    callback(filteredOptions);
+  };
+
+
   return (
     <>
       <Card
@@ -82,12 +161,13 @@ function Administer() {
         body={
           <>
             {!userEmail && <h4>Search for the account to be administered</h4>}
-            {!userEmail && (
-              <SrchAccount
-                srchResults={srchResults}
-                setSrchResults={setSrchResults}
-              />
-            )}
+            {!userEmail &&<AsyncSelect
+                    defaultOptions
+                    loadOptions={loadOptions}
+                    onChange={handleChange}
+                    placeholder="Enter email or name to search"
+                  /> }
+
             {userEmail && (
               <div>
                 <h4>You are administering the account for {userEmail}</h4>
@@ -96,7 +176,8 @@ function Administer() {
                 </button>
               </div>
             )}
-            <SrchResultsTable srchResults={srchResults} />
+             
+           
             <Button id="alldata" className="p-2 m-2" onClick={handleAlldata}>
               View Transactions
             </Button>
@@ -114,72 +195,6 @@ function Administer() {
       />
     </>
   );
-}
-
-export function SrchResultsTable(props) {
-  const {
-    setUserId,
-    setUserEmail,
-    setUserBalance,
-    setUserHistory,
-    setUserRoles,
-  } = useAppContext();
-
-  const data = props.srchResults;
-
-  useEffect(() => {
-    console.log("in useeffect of srchresultstable");
-  }, []);
-
-  //Fundtion to set All user values in context from the db returned data
-  function setUserFromDBData(userData) {
-    console.log("in setuserfromdbdata" + userData);
-    setUserId(userData._id);
-    setUserEmail(userData.email);
-    setUserBalance(userData.balance);
-    setUserHistory(userData.history);
-    setUserRoles(userData.roles);
-  }
-  function handleSelectChange(e) {
-    const selUserData = data.filter((user) => user._id === e.target.value);
-    setUserFromDBData(selUserData[0]);
-  }
-
-  if (data.length >= 1) {
-    const tableRows = data.map((user) => {
-      return (
-        <tr key={user._id}>
-          <td>
-            <FormCheck
-              value={user._id}
-              type="radio"
-              name="selectid"
-              onChange={handleSelectChange}
-            ></FormCheck>
-          </td>
-          <td>{user._id}</td>
-          <td>{user.name}</td>
-          <td>{user.balance}</td>
-        </tr>
-      );
-    });
-    return (
-      <>
-        <Table striped>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Account ID</th>
-              <th>Name</th>
-              <th>Balance</th>
-            </tr>
-          </thead>
-          <tbody>{tableRows}</tbody>
-        </Table>
-      </>
-    );
-  }
-  return <></>;
 }
 
 export default Administer;

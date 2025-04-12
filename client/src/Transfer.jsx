@@ -16,7 +16,6 @@ function Transfer() {
 
   const [transferAmount, setTransferAmount] = useState(0);
   const [toUserEmail, setToUserEmail] = useState(null);
-  const [matchingUsers, setMatchingUsers] = useState(null);
   const [status, setStatus] = useState("");
 
   const navigate = useNavigate();
@@ -32,18 +31,14 @@ function Transfer() {
   }, [loggedInEmail, userEmail, userBalance]);
 
   const loadOptions = async (searchValue, callback) => {
-    console.log("options are-----" + users);
     const filteredOptions = users.filter((option) =>
       option.label.toLowerCase().includes(searchValue.toLowerCase())
     );
-    console.log("loadoptions", searchValue, filteredOptions);
     callback(filteredOptions);
   };
 
   const handleChange = (selectedOption) => {
-    console.log("handlechange", selectedOption);
     setToUserEmail(selectedOption.value);
-    console.log("handlechange after", toUserEmail);
   };
 
   async function transfer() {
@@ -53,24 +48,6 @@ function Transfer() {
       clearFields();
     }
   }
-
-  async function getMatchingUsers(nametosearch) {
-    console.log("in getsrchresults");
-    let url = "";
-    if (nametosearch != null && nametosearch != "") {
-      url = `${serverUrl}/account/search/${nametosearch}`;
-    }
-    const response = await fetch(url);
-    const matchingUsers = await response.json();
-    return matchingUsers;
-  }
-
-  /*async function handleToUserChange(e) {
-    console.log(' in handleToUserChange'+e.target.value);
-    setToUserEmail(e.target.value);
-    const data = await getMatchingUsers(e.target.value);
-    setSrchResults((oldData)=>data);
-  }*/
 
   //Needs to be implemented to check if sufficient funds are available etc.
   function validateTransfer() {
@@ -100,9 +77,7 @@ function Transfer() {
   }
 
   async function callTransferAmt() {
-    console.log(
-      `hhhhhhhhhhhhhh= ${loggedInEmail}/${userEmail}/${toUserEmail}/${transferAmount}`
-    );
+
     let response = await fetch(
       serverUrl +
         `/account/transfer/${loggedInEmail}/${userEmail}/${toUserEmail}/${transferAmount}`

@@ -155,8 +155,8 @@ app.get(
     const createdDt = Date.now();
     console.log("in create api call in server js");
     try {
-      //verifyIdToken(req,res)
-      //if (res.status == 200) {
+     // verifyIdToken(req,res)
+     // if (res.status == 200) {
 
       //check if account exists
       dal.find(req.params.email).then((user) => {
@@ -185,7 +185,7 @@ app.get(
           res.send(updatedUser);
         }
       });
-      //}
+     // }
     } catch (err) {
       console.log("ERROR - encountered in calling create");
       res.status(500).send("Internal server error: " + err);
